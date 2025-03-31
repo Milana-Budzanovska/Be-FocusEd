@@ -1,9 +1,10 @@
 /* App.css — загальні стилі платформи */
 
 body {
+  font-family: Arial, sans-serif;
   margin: 0;
-  font-family: 'Quicksand', sans-serif;
-  background: linear-gradient(to bottom right, #FFF6F0, #F3E6FF);
+  padding: 0;
+  background: linear-gradient(to bottom right, #a8c0ff, #fbc2eb);
   min-height: 100vh;
   color: #333;
 }
