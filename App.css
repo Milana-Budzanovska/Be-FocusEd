@@ -1,0 +1,78 @@
+/* App.css — загальні стилі платформи */
+
+body {
+  margin: 0;
+  font-family: 'Quicksand', sans-serif;
+  background: linear-gradient(to bottom right, #FFF6F0, #F3E6FF);
+  min-height: 100vh;
+  color: #333;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #333;
+  margin-bottom: 0.5rem;
+}
+
+p {
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+button {
+  padding: 0.8rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  font-size: 1rem;
+  background-color: #A78BFA;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background-color: #8b6efb;
+  transform: scale(1.03);
+}
+
+button:active {
+  transform: scale(0.97);
+}
+
+select, input {
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-top: 0.3rem;
+  width: 100%;
+}
+
+.container {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 700px;
+  margin: 2rem auto;
+  text-align: center;
+}
+
+/* Додаткові стилі для mood-emoji кнопок */
+.mood-button {
+  font-size: 2.5rem;
+  padding: 1rem;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  transition: all 0.3s ease;
+}
+
+.mood-button:hover {
+  background-color: #f0e8ff;
+  transform: scale(1.1);
+}
+
+.mood-button.selected {
+  border: 3px solid #A78BFA;
+  background-color: #e0d4fd;
+}
