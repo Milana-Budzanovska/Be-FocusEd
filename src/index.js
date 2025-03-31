@@ -2,12 +2,14 @@ import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import MoodCheck from './MoodCheck';
 import MainMenu from './MainMenu';
 import Breathing from './Breathing';
 import Learning from './Learning';
 import Progress from './Progress';
 import Settings from './Settings';
+
 import './App.css';
 
 const Root = () => {
@@ -20,6 +22,7 @@ const Root = () => {
         <Route path="/breathing" element={<Breathing />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/settings" element={<Settings />} />
+        {/* Якщо шлях не знайдено — переходимо в меню */}
         <Route path="*" element={<MainMenu />} />
       </Routes>
     </Router>
@@ -28,4 +31,6 @@ const Root = () => {
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(<Root />);
-serviceWorkerRegistration.register();          
+
+// ✅ Активуємо Service Worker для роботи PWA
+serviceWorkerRegistration.register();
