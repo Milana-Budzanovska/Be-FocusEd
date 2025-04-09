@@ -15,6 +15,9 @@ export default function MainMenu() {
         <button onClick={() => navigate('/breathing')} style={buttonStyle}>🫁 Дихальна вправа</button>
         <button onClick={() => navigate('/progress')} style={buttonStyle}>📊 Мій прогрес</button>
         <button onClick={() => navigate('/settings')} style={buttonStyle}>⚙️ Налаштування</button>
+        <button onClick={() => navigate('/forum')} style={{ ...buttonStyle, backgroundColor: '#7BC86C' }}>
+          🫂 Спільнота підтримки
+        </button>
       </div>
     </div>
   );
