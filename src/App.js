@@ -6,7 +6,7 @@ import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
-import Forum from './Forum'; // <-- додано
+import Forum from './forum'; // <-- додано
 
 function App() {
   return (
