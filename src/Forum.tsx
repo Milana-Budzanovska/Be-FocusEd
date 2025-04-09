@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import './Forum.css'; // додай стилі для градієнту, бульбашок тощо
 
-const socket = io('https://be-focused-forum.onrender.com'); // заміни на свій backend URL
+const socket = io('https://focused-chat-server.onrender.com'); // заміни на свій backend URL
 
 const Forum: React.FC = () => {
   const [messages, setMessages] = useState<any[]>([]);
