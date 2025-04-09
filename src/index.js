@@ -9,6 +9,7 @@ import Breathing from './Breathing';
 import Learning from './Learning';
 import Progress from './Progress';
 import Settings from './Settings';
+import Forum from './Forum'; 
 
 import './App.css';
 
