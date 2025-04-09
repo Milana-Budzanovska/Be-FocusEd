@@ -17,16 +17,16 @@ import './Forum.css';
 const Root = () => {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<MoodCheck />} />
-        <Route path="/menu" element={<MainMenu />} />
-        <Route path="/learning" element={<Learning />} />
-        <Route path="/breathing" element={<Breathing />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/settings" element={<Settings />} />
-        {/* Якщо шлях не знайдено — переходимо в меню */}
-        <Route path="*" element={<MainMenu />} />
-      </Routes>
+     <Routes>
+  <Route path="/" element={<MoodCheck />} />
+  <Route path="/menu" element={<MainMenu />} />
+  <Route path="/learning" element={<Learning />} />
+  <Route path="/breathing" element={<Breathing />} />
+  <Route path="/progress" element={<Progress />} />
+  <Route path="/settings" element={<Settings />} />
+  <Route path="/forum" element={<Forum />} /> {/* ✅ Додано */}
+  <Route path="*" element={<MainMenu />} />
+     </Routes>
     </Router>
   );
 };
