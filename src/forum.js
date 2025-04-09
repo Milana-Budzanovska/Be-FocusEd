@@ -1,11 +1,11 @@
-// forum.js
+// src/pages/Forum.js
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import './Forum.css'; // додай стилі для градієнту, бульбашок тощо
+import './Forum.css'; // стилі для анімації, градієнтів, фону
 
-const socket = io('https://focused-chat-server.onrender.com'); // заміни на свій backend URL
+const socket = io('https://focused-chat-server.onrender.com');
 
-function Forum() {
+const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [emotion, setEmotion] = useState('Радість');
   const [text, setText] = useState('');
@@ -22,7 +22,12 @@ function Forum() {
 
   const handleSend = () => {
     if (text.trim()) {
-      const message = { nickname, emotion, text };
+      const message = {
+        nickname,
+        emotion,
+        text,
+        avatar: `/avatars/${emotion}.png`,
+      };
       socket.emit('send_message', message);
       setMessages((prev) => [...prev, message]);
       setText('');
@@ -41,27 +46,29 @@ function Forum() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6">
-        <h1 className="text-2xl font-bold text-purple-700 mb-4">🌱 Платформа підтримки</h1>
-        <div className="space-y-3 mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 flex items-center justify-center p-4 forum-bg">
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 relative z-10">
+        <h1 className="text-2xl font-bold text-purple-700 mb-4">🌱 Спільнота підтримки</h1>
+        <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
           {messages.map((m, i) => (
-            <div key={i} className={`rounded-xl p-3 shadow ${getColor(m.emotion)}`}>
-              <p className="text-sm text-gray-500">{m.nickname} ({m.emotion.toLowerCase()})</p>
-              <p className="text-lg">{m.text}</p>
+            <div key={i} className={`rounded-xl p-3 shadow flex gap-3 items-start ${getColor(m.emotion)}`}>
+              <img src={m.avatar} alt="avatar" className="w-10 h-10 rounded-full shadow" />
+              <div>
+                <p className="text-sm text-gray-500">{m.nickname} — {m.emotion}</p>
+                <p className="text-md">{m.text}</p>
+              </div>
             </div>
           ))}
         </div>
 
         <div className="mb-2">
-          <label className="text-sm">Нікнейм:</label>
           <input
             type="text"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
+            placeholder="Твій нік"
             className="w-full border px-3 py-2 rounded-md mb-2"
           />
-          <label className="text-sm">Як ти себе почуваєш?</label>
           <select
             value={emotion}
             onChange={(e) => setEmotion(e.target.value)}
@@ -87,6 +94,6 @@ function Forum() {
       </div>
     </div>
   );
-}
+};
 
 export default Forum;
