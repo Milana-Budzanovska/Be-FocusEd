@@ -6,7 +6,7 @@ import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
-import Forum from './pages/Forum'; // Імпортуємо Forum
+import Forum from './Forum'; // <-- додано
 
 function App() {
   return (
@@ -18,7 +18,7 @@ function App() {
         <Route path="/breathing" element={<Breathing />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/forum" element={<Forum />} /> {/* ➕ Маршрут для форуму */}
+        <Route path="/forum" element={<Forum />} /> {/* <-- Ось цей маршрут */}
         <Route path="*" element={<MainMenu />} />
       </Routes>
     </Router>
