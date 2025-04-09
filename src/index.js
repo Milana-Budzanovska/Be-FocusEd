@@ -12,6 +12,7 @@ import Settings from './Settings';
 import Forum from './Forum'; 
 
 import './App.css';
+import './Forum.css';
 
 const Root = () => {
   return (
