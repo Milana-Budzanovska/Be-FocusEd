@@ -7,6 +7,7 @@ import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
+import './App.css';
 import Forum from './Forum'; // ✅ Додано імпорт форуму
 
 function App() {
