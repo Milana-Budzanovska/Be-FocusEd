@@ -9,7 +9,7 @@ import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
-import Forum from './forum'; // імпортуємо сторінку форуму
+import Forum from './Forum'; // імпортуємо сторінку форуму
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
