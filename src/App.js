@@ -1,14 +1,14 @@
 // src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
 import MoodCheck from './MoodCheck';
 import MainMenu from './MainMenu';
 import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
-import './App.css';
-import Forum from './Forum'; // ✅ Додано імпорт форуму
+iimport Forum from './Forum'; // ✅ Додано імпорт форуму
 
 function App() {
   return (
