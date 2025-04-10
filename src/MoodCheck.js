@@ -36,7 +36,6 @@ export default function MoodCheck() {
 } 
 
 // src/pages/MainMenu.js
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function MainMenu() {
