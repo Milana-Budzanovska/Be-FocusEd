@@ -3,7 +3,9 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import './Forum.css'; // стилі для анімації, градієнтів, фону
 
-const socket = io('https://focused-chat-server.onrender.com');
+const socket = io('wss://focused-chat-server.onrender.com', {
+  transports: ['websocket']
+});
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
