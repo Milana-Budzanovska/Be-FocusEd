@@ -1,3 +1,4 @@
+// src/MainMenu.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -15,7 +16,10 @@ export default function MainMenu() {
         <button onClick={() => navigate('/breathing')} style={buttonStyle}>🫁 Дихальна вправа</button>
         <button onClick={() => navigate('/progress')} style={buttonStyle}>📊 Мій прогрес</button>
         <button onClick={() => navigate('/settings')} style={buttonStyle}>⚙️ Налаштування</button>
-        <button onClick={() => navigate('/forum')} style={{ ...buttonStyle, backgroundColor: '#7BC86C' }}>
+        <button
+          onClick={() => navigate('/forum')}
+          style={{ ...buttonStyle, backgroundColor: '#7BC86C' }}
+        >
           🫂 Спільнота підтримки
         </button>
       </div>
@@ -31,4 +35,5 @@ const buttonStyle = {
   backgroundColor: '#007BFF',
   color: 'white',
   cursor: 'pointer',
+  transition: '0.2s',
 };
