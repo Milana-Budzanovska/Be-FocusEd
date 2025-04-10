@@ -1,97 +1,90 @@
 // src/pages/Forum.js
-import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
-import './Forum.css'; // стилі для анімації, градієнтів, фону
+import React, { useEffect, useRef, useState } from 'react';
+import './Forum.css';
 
-const socket = io('wss://focused-chat-server.onrender.com', {
-  transports: ['websocket']
-});
+const socket = new WebSocket('wss://focused-community-server.onrender.com'); // або локально: ws://localhost:4000
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
-  const [emotion, setEmotion] = useState('Радість');
-  const [text, setText] = useState('');
   const [nickname, setNickname] = useState('Я');
+  const [text, setText] = useState('');
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
-    socket.on('new_message', (msg) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-    return () => {
-      socket.off('new_message');
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.type === 'history') {
+        setMessages(data.messages);
+      } else if (data.type === 'new-message') {
+        setMessages(prev => [...prev, data.message]);
+      } else if (data.type === 'update-reaction') {
+        setMessages(prev =>
+          prev.map(m => m.id === data.id ? { ...m, reaction: data.reaction } : m)
+        );
+      }
     };
   }, []);
 
-  const handleSend = () => {
+  const sendMessage = () => {
     if (text.trim()) {
-      const message = {
-        nickname,
-        emotion,
+      socket.send(JSON.stringify({
+        type: 'new-message',
         text,
-        avatar: `/avatars/${emotion}.png`,
-      };
-      socket.emit('send_message', message);
-      setMessages((prev) => [...prev, message]);
+        nickname,
+        avatar: '🧠'
+      }));
       setText('');
     }
   };
 
-  const getColor = (emo) => {
-    switch (emo) {
-      case 'Сум': return 'bg-yellow-100';
-      case 'Радість': return 'bg-purple-100';
-      case 'Спокій': return 'bg-blue-100';
-      case 'Злість': return 'bg-red-100';
-      case 'Страх': return 'bg-gray-100';
-      default: return 'bg-white';
-    }
+  const addReaction = (id, reaction) => {
+    socket.send(JSON.stringify({
+      type: 'reaction',
+      id,
+      reaction
+    }));
   };
 
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-blue-100 flex items-center justify-center p-4 forum-bg">
-      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-xl p-6 relative z-10">
-        <h1 className="text-2xl font-bold text-purple-700 mb-4">🌱 Спільнота підтримки</h1>
-        <div className="space-y-3 mb-6 max-h-80 overflow-y-auto">
-          {messages.map((m, i) => (
-            <div key={i} className={`rounded-xl p-3 shadow flex gap-3 items-start ${getColor(m.emotion)}`}>
-              <img src={m.avatar} alt="avatar" className="w-10 h-10 rounded-full shadow" />
-              <div>
-                <p className="text-sm text-gray-500">{m.nickname} — {m.emotion}</p>
-                <p className="text-md">{m.text}</p>
+    <div className="forum-wrapper">
+      <div className="forum-box">
+        <h1>🌱 Спільнота підтримки</h1>
+        <div className="forum-messages">
+          {messages.map(msg => (
+            <div key={msg.id} className="message-card">
+              <div className="message-header">
+                <span className="avatar">{msg.avatar}</span>
+                <strong>{msg.nickname}</strong>
+              </div>
+              <p>{msg.text}</p>
+              <div className="reactions">
+                {['❤️', '👍', '⭐', '🤗'].map(r => (
+                  <button key={r} onClick={() => addReaction(msg.id, r)}>{r}</button>
+                ))}
+                {msg.reaction && <span className="selected-reaction">{msg.reaction}</span>}
               </div>
             </div>
           ))}
+          <div ref={messageEndRef} />
         </div>
-
-        <div className="mb-2">
+        <div className="forum-inputs">
           <input
-            type="text"
-            value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
             placeholder="Твій нік"
-            className="w-full border px-3 py-2 rounded-md mb-2"
+            value={nickname}
+            onChange={e => setNickname(e.target.value)}
           />
-          <select
-            value={emotion}
-            onChange={(e) => setEmotion(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md mb-2"
-          >
-            {['Радість', 'Сум', 'Спокій', 'Злість', 'Страх'].map((emo) => (
-              <option key={emo} value={emo}>{emo}</option>
-            ))}
-          </select>
           <textarea
-            placeholder="Напиши свої думки..."
+            placeholder="Поділись своїми думками..."
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            className="w-full border px-3 py-2 rounded-md mb-2"
+            onChange={e => setText(e.target.value)}
           />
-          <button
-            onClick={handleSend}
-            className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-full shadow-md"
-          >
-            💬 Надіслати
-          </button>
+          <button onClick={sendMessage}>💬 Надіслати</button>
         </div>
       </div>
     </div>
