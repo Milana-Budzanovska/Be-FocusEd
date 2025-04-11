@@ -5,11 +5,11 @@ import { useNavigate } from 'react-router-dom';
 export default function MoodCheck() {
   const navigate = useNavigate();
   const moods = [
-    { label: '😊 Щасливий', color: '#ffeb3b' },
-    { label: '😐 Нейтральний', color: '#9e9e9e' },
-    { label: '😢 Сумний', color: '#2196f3' },
-    { label: '😡 Злий', color: '#f44336' },
-    { label: '😨 Стурбований', color: '#9c27b0' }
+    { label: '😊 Щасливий', color: '#fff3b3' }, // пастельний жовтий
+    { label: '😐 Нейтральний', color: '#d1d1d1' }, // пастельний сірий
+    { label: '😢 Сумний', color: '#a3c4f3' }, // пастельний блакитний
+    { label: '😡 Злий', color: '#f4b8b8' }, // пастельний червоний
+    { label: '😨 Стурбований', color: '#d8a9e0' } // пастельний фіолетовий
   ];
 
   const handleMoodSelect = (mood) => {
@@ -31,7 +31,7 @@ export default function MoodCheck() {
   };
 
   const headingStyle = {
-    fontSize: '3rem', // використано великий шрифт для заголовка
+    fontSize: '3rem', // великий шрифт для заголовка
     fontWeight: 'bold',
     color: '#6a0dad',
     marginBottom: '1.5rem',
@@ -58,8 +58,8 @@ export default function MoodCheck() {
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     transition: 'background-color 0.3s ease-in-out',
     width: '100%',
-    maxWidth: '350px', // додаємо максимальну ширину для кнопок
-    textAlign: 'center', // вирівнюємо текст по центру
+    maxWidth: '350px',
+    textAlign: 'center',
   });
 
   const buttonHoverStyle = {
