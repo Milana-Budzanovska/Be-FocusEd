@@ -1,5 +1,5 @@
-// src/pages/Forum.js
 import React, { useEffect, useRef, useState } from 'react';
+import { connectWebSocket } from './webSocketService';
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
@@ -9,10 +9,7 @@ const Forum = () => {
   const socket = useRef(null);
 
   useEffect(() => {
-    socket.current = new WebSocket('wss://rhinestone-tin-ranunculus.glitch.me');
-
-    socket.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+    socket.current = connectWebSocket('wss://rhinestone-tin-ranunculus.glitch.me', (data) => {
       if (data.type === 'history') {
         setMessages(data.messages);
       } else if (data.type === 'new-message') {
@@ -22,19 +19,8 @@ const Forum = () => {
           prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
         );
       }
-    };
-
-    socket.current.onerror = (err) => {
-      console.error('WebSocket Error:', err);
-    };
-
-    socket.current.onclose = () => {
-      console.log('WebSocket закрито');
-    };
-
-    return () => {
-      socket.current.close();
-    };
+    });
+    return () => socket.current && socket.current.close();
   }, []);
 
   const sendMessage = () => {
@@ -124,54 +110,53 @@ const styles = {
   },
   box: {
     width: '100%',
-    maxWidth: '600px',
-    padding: '1.5rem',
+    maxWidth: '500px',
+    padding: '1rem',
     background: '#ffffff',
-    borderRadius: '10px',
+    borderRadius: '16px',
     boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-    overflow: 'hidden',
   },
   header: {
-    fontSize: '24px',
+    fontSize: '22px',
     textAlign: 'center',
     color: '#6c5ce7',
     marginBottom: '1rem',
   },
   messages: {
-    maxHeight: '400px',
+    maxHeight: '50vh',
     overflowY: 'scroll',
     marginBottom: '1rem',
   },
   messageCard: {
     backgroundColor: '#f7f7f7',
-    padding: '1rem',
-    borderRadius: '10px',
-    marginBottom: '1rem',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+    padding: '0.8rem',
+    borderRadius: '12px',
+    marginBottom: '0.8rem',
+    fontSize: '0.95rem',
   },
   messageHeader: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: '0.5rem',
+    marginBottom: '0.4rem',
   },
   avatar: {
     marginRight: '0.5rem',
-    fontSize: '1.5rem',
+    fontSize: '1.2rem',
   },
   reactions: {
     display: 'flex',
-    gap: '0.5rem',
+    gap: '0.4rem',
     marginTop: '0.5rem',
   },
   reactionButton: {
     border: 'none',
     background: 'none',
     cursor: 'pointer',
-    fontSize: '1.5rem',
+    fontSize: '1.4rem',
   },
   selectedReaction: {
-    marginLeft: '1rem',
-    fontSize: '1.5rem',
+    marginLeft: '0.6rem',
+    fontSize: '1.4rem',
     color: '#6c5ce7',
   },
   inputs: {
@@ -179,22 +164,22 @@ const styles = {
     flexDirection: 'column',
   },
   input: {
-    padding: '0.8rem',
-    marginBottom: '1rem',
+    padding: '0.6rem',
+    marginBottom: '0.6rem',
     borderRadius: '10px',
     border: '1px solid #ccc',
     fontSize: '1rem',
   },
   textarea: {
-    padding: '0.8rem',
-    marginBottom: '1rem',
+    padding: '0.6rem',
+    marginBottom: '0.6rem',
     borderRadius: '10px',
     border: '1px solid #ccc',
     fontSize: '1rem',
-    height: '100px',
+    height: '80px',
   },
   sendButton: {
-    padding: '0.8rem',
+    padding: '0.6rem',
     backgroundColor: '#6c5ce7',
     color: '#fff',
     border: 'none',
