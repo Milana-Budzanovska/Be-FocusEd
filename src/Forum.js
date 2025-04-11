@@ -1,39 +1,42 @@
+// src/pages/Forum.js
 import React, { useEffect, useRef, useState } from 'react';
-import { connectWebSocket } from './webSocketService'; // Імпортуємо сервіс для WebSocket
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
-  const messageEndRef = useRef(null); // Для прокручування до останнього повідомлення
-  const socket = useRef(null); // Зберігаємо посилання на WebSocket
+  const messageEndRef = useRef(null);
+  const socket = useRef(null);
 
-  // Підключаємося до WebSocket і отримуємо повідомлення
   useEffect(() => {
-    // Підключення до WebSocket і передача callback для обробки повідомлень
-    socket.current = connectWebSocket('wss://focused-community-server.onrender.com', (data) => {
-      console.log('Отримано повідомлення від сервера:', data); // Логуємо отримані дані
+    socket.current = new WebSocket('wss://rhinestone-tin-ranunculus.glitch.me');
 
+    socket.current.onmessage = (event) => {
+      const data = JSON.parse(event.data);
       if (data.type === 'history') {
-        setMessages(data.messages); // Якщо тип 'history', то оновлюємо список повідомлень
+        setMessages(data.messages);
       } else if (data.type === 'new-message') {
-        setMessages((prev) => [...prev, data.message]); // Якщо тип 'new-message', додаємо нове повідомлення
+        setMessages((prev) => [...prev, data.message]);
       } else if (data.type === 'update-reaction') {
         setMessages((prev) =>
-          prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m)) // Оновлюємо реакції
+          prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
         );
       }
-    });
+    };
 
-    // Закриваємо WebSocket при демонтажі компоненту
+    socket.current.onerror = (err) => {
+      console.error('WebSocket Error:', err);
+    };
+
+    socket.current.onclose = () => {
+      console.log('WebSocket закрито');
+    };
+
     return () => {
-      if (socket.current) {
-        socket.current.close();
-      }
+      socket.current.close();
     };
   }, []);
 
-  // Функція для надсилання повідомлення
   const sendMessage = () => {
     if (text.trim()) {
       socket.current.send(
@@ -44,11 +47,10 @@ const Forum = () => {
           avatar: '🧠',
         })
       );
-      setText(''); // Очищаємо текст після відправки
+      setText('');
     }
   };
 
-  // Функція для додавання реакцій до повідомлення
   const addReaction = (id, reaction) => {
     socket.current.send(
       JSON.stringify({
@@ -59,26 +61,25 @@ const Forum = () => {
     );
   };
 
-  // Прокручуємо вниз при кожному оновленні списку повідомлень
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'smooth' }); // Прокручування до останнього повідомлення
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [messages]);
 
   return (
-    <div className="forum-wrapper" style={styles.wrapper}>
-      <div className="forum-box" style={styles.box}>
+    <div style={styles.wrapper}>
+      <div style={styles.box}>
         <h1 style={styles.header}>🌱 Спільнота підтримки</h1>
-        <div className="forum-messages" style={styles.messages}>
+        <div style={styles.messages}>
           {messages.map((msg) => (
-            <div key={msg.id} className="message-card" style={styles.messageCard}>
-              <div className="message-header" style={styles.messageHeader}>
-                <span className="avatar" style={styles.avatar}>{msg.avatar}</span>
+            <div key={msg.id} style={styles.messageCard}>
+              <div style={styles.messageHeader}>
+                <span style={styles.avatar}>{msg.avatar}</span>
                 <strong>{msg.nickname}</strong>
               </div>
               <p>{msg.text}</p>
-              <div className="reactions" style={styles.reactions}>
+              <div style={styles.reactions}>
                 {['❤️', '👍', '⭐', '🤗'].map((r) => (
                   <button key={r} onClick={() => addReaction(msg.id, r)} style={styles.reactionButton}>
                     {r}
@@ -90,7 +91,7 @@ const Forum = () => {
           ))}
           <div ref={messageEndRef} />
         </div>
-        <div className="forum-inputs" style={styles.inputs}>
+        <div style={styles.inputs}>
           <input
             placeholder="Твій нік"
             value={nickname}
@@ -110,7 +111,6 @@ const Forum = () => {
   );
 };
 
-// Стилі для компонентів
 const styles = {
   wrapper: {
     display: 'flex',
@@ -118,7 +118,7 @@ const styles = {
     alignItems: 'center',
     minHeight: '100vh',
     background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
-    fontFamily: "'Comic Sans MS', 'Nunito', sans-serif',
+    fontFamily: "'Comic Sans MS', 'Nunito', sans-serif",
     padding: '1rem',
     boxSizing: 'border-box',
   },
@@ -135,6 +135,7 @@ const styles = {
     fontSize: '24px',
     textAlign: 'center',
     color: '#6c5ce7',
+    marginBottom: '1rem',
   },
   messages: {
     maxHeight: '400px',
