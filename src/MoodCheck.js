@@ -1,14 +1,15 @@
+// src/pages/MoodCheck.js
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function MoodCheck() {
   const navigate = useNavigate();
   const moods = [
-    { label: '😊 Щасливий', color: '#fef2c0' },  // світло-жовтий
-    { label: '😐 Нейтральний', color: '#d1d5db' },  // світло-сірий
-    { label: '😢 Сумний', color: '#a7c7e7' },  // світло-синій
-    { label: '😡 Злий', color: '#fca5a5' },  // світло-червоний
-    { label: '😨 Стурбований', color: '#e9d6f7' },  // світло-фіолетовий
+    { label: '😊 Щасливий', color: '#ffeb3b' },
+    { label: '😐 Нейтральний', color: '#9e9e9e' },
+    { label: '😢 Сумний', color: '#2196f3' },
+    { label: '😡 Злий', color: '#f44336' },
+    { label: '😨 Стурбований', color: '#9c27b0' }
   ];
 
   const handleMoodSelect = (mood) => {
@@ -16,61 +17,64 @@ export default function MoodCheck() {
     navigate('/menu');
   };
 
-  const appStyle = {
+  const containerStyle = {
     minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #A2C2E2, #E4A0A0)', // градієнтний фон
+    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    fontFamily: 'Nunito, sans-serif',
     padding: '2rem',
     boxSizing: 'border-box',
-    fontFamily: 'Arial, sans-serif',
+    margin: 0,
   };
 
-  const titleStyle = {
-    fontSize: '2.5rem',
+  const headingStyle = {
+    fontSize: '3rem',
     fontWeight: 'bold',
-    color: '#4B2C20',
-    marginBottom: '1.5rem',
-    textAlign: 'center',
+    color: '#6a0dad',
+    marginBottom: '2rem',
   };
 
-  const buttonGridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
+  const buttonContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
     gap: '1.5rem',
+    alignItems: 'center',
     width: '100%',
-    maxWidth: '500px',
+    maxWidth: '400px',
   };
 
   const buttonStyle = (color) => ({
     fontSize: '1.5rem',
     padding: '1rem 2rem',
-    borderRadius: '12px',
+    borderRadius: '15px',
+    border: 'none',
     backgroundColor: color,
-    color: '#4B2C20',
+    color: 'white',
     cursor: 'pointer',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    transition: 'transform 0.2s, box-shadow 0.2s',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    transition: 'background-color 0.3s ease-in-out',
+    width: '100%',
   });
 
   const buttonHoverStyle = {
     transform: 'scale(1.05)',
-    boxShadow: '0 6px 12px rgba(0, 0, 0, 0.15)',
+    backgroundColor: '#a29bfe', // Hover effect for all buttons
   };
 
   return (
-    <div style={appStyle}>
-      <h1 style={titleStyle}>Як ти себе сьогодні почуваєш?</h1>
-      <div style={buttonGridStyle}>
+    <div style={containerStyle}>
+      <h1 style={headingStyle}>Як ти себе сьогодні почуваєш?</h1>
+      <div style={buttonContainerStyle}>
         {moods.map((mood, index) => (
           <button
             key={index}
             onClick={() => handleMoodSelect(mood.label)}
             style={buttonStyle(mood.color)}
-            onMouseEnter={(e) => e.target.style = { ...buttonStyle(mood.color), ...buttonHoverStyle }}
-            onMouseLeave={(e) => e.target.style = buttonStyle(mood.color)}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a29bfe'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = mood.color}
           >
             {mood.label}
           </button>
