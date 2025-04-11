@@ -1,26 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connectWebSocket } from './webSocketService'; // Імпортуємо сервіс для WebSocket
+import { connectWebSocket } from './webSocketService'; // Імпортуємо функцію для підключення до WebSocket
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
-  const messageEndRef = useRef(null);
+  const messageEndRef = useRef(null); // Для прокручування до останнього повідомлення
   const socket = useRef(null); // Зберігаємо посилання на WebSocket
 
   // Використовуємо useEffect для підключення до WebSocket
   useEffect(() => {
-    // Підключення до WebSocket і передача callback для обробки повідомлень
+    // Підключення до WebSocket та передача callback для обробки повідомлень
     socket.current = connectWebSocket('wss://focused-community-server.onrender.com', (data) => {
-      console.log('Отримано повідомлення від сервера:', data); // Логування отриманих даних
+      console.log('Отримано повідомлення від сервера:', data); // Логуємо отримані дані
 
       if (data.type === 'history') {
-        setMessages(data.messages); // Отримуємо історію повідомлень
+        setMessages(data.messages); // Якщо тип 'history', то оновлюємо список повідомлень
       } else if (data.type === 'new-message') {
-        setMessages((prev) => [...prev, data.message]); // Додаємо нове повідомлення
+        setMessages((prev) => [...prev, data.message]); // Якщо тип 'new-message', додаємо нове повідомлення
       } else if (data.type === 'update-reaction') {
         setMessages((prev) =>
-          prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
+          prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m)) // Оновлюємо реакції
         );
       }
     });
@@ -44,11 +44,11 @@ const Forum = () => {
           avatar: '🧠',
         })
       );
-      setText('');
+      setText(''); // Очищаємо текст після відправки
     }
   };
 
-  // Додаємо реакцію до повідомлення
+  // Функція для додавання реакцій до повідомлення
   const addReaction = (id, reaction) => {
     socket.current.send(
       JSON.stringify({
@@ -62,7 +62,7 @@ const Forum = () => {
   // Прокручуємо вниз при кожному оновленні списку повідомлень
   useEffect(() => {
     if (messageEndRef.current) {
-      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' }); // Прокручування до останнього повідомлення
     }
   }, [messages]);
 
