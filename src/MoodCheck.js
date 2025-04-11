@@ -5,11 +5,11 @@ import { useNavigate } from 'react-router-dom';
 export default function MoodCheck() {
   const navigate = useNavigate();
   const moods = [
-    { label: '😊 Щасливий', color: '#fff3b3' }, // пастельний жовтий
-    { label: '😐 Нейтральний', color: '#d1d1d1' }, // пастельний сірий
-    { label: '😢 Сумний', color: '#a3c4f3' }, // пастельний блакитний
-    { label: '😡 Злий', color: '#f4b8b8' }, // пастельний червоний
-    { label: '😨 Стурбований', color: '#d8a9e0' } // пастельний фіолетовий
+    { label: '😊 Щасливий', color: '#e0f7fa' }, // м'який блакитний
+    { label: '😐 Нейтральний', color: '#f0f4c3' }, // пастельний зелений
+    { label: '😢 Сумний', color: '#fce4ec' }, // м'який рожевий
+    { label: '😡 Злий', color: '#fff9c4' }, // світлий жовтий
+    { label: '😨 Стурбований', color: '#d1c4e9' } // пастельний фіолетовий
   ];
 
   const handleMoodSelect = (mood) => {
@@ -19,7 +19,7 @@ export default function MoodCheck() {
 
   const containerStyle = {
     minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
+    background: '#f5f5f5', // ніжний фон для кращого контрасту
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -31,9 +31,9 @@ export default function MoodCheck() {
   };
 
   const headingStyle = {
-    fontSize: '3rem', // великий шрифт для заголовка
+    fontSize: '2.5rem', // великий шрифт для заголовка
     fontWeight: 'bold',
-    color: '#6a0dad',
+    color: '#6a0dad', // м'який фіолетовий для заголовка
     marginBottom: '1.5rem',
     textAlign: 'center',
   };
@@ -44,28 +44,22 @@ export default function MoodCheck() {
     gap: '1rem',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '350px', // щоб кнопки не були занадто широкими на екрані
   };
 
   const buttonStyle = (color) => ({
-    fontSize: '1.5rem',
-    padding: '1rem 2rem',
-    borderRadius: '15px',
+    fontSize: '1.4rem',
+    padding: '1rem 1.5rem',
+    borderRadius: '10px', // округлі краї
     border: 'none',
     backgroundColor: color,
-    color: 'white',
+    color: '#333', // темний текст для кращої читабельності
     cursor: 'pointer',
-    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     transition: 'background-color 0.3s ease-in-out',
     width: '100%',
-    maxWidth: '350px',
     textAlign: 'center',
+    boxSizing: 'border-box',
   });
-
-  const buttonHoverStyle = {
-    transform: 'scale(1.05)',
-    backgroundColor: '#a29bfe', // Hover effect для всіх кнопок
-  };
 
   return (
     <div style={containerStyle}>
@@ -76,8 +70,6 @@ export default function MoodCheck() {
             key={index}
             onClick={() => handleMoodSelect(mood.label)}
             style={buttonStyle(mood.color)}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#a29bfe'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = mood.color}
           >
             {mood.label}
           </button>
