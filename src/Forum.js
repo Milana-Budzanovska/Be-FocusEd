@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connectWebSocket } from './webSocketService'; // Імпортуємо функцію для підключення до WebSocket
+import { connectWebSocket } from './webSocketService'; // Імпортуємо сервіс для WebSocket
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
@@ -8,9 +8,9 @@ const Forum = () => {
   const messageEndRef = useRef(null); // Для прокручування до останнього повідомлення
   const socket = useRef(null); // Зберігаємо посилання на WebSocket
 
-  // Використовуємо useEffect для підключення до WebSocket
+  // Підключаємося до WebSocket і отримуємо повідомлення
   useEffect(() => {
-    // Підключення до WebSocket та передача callback для обробки повідомлень
+    // Підключення до WebSocket і передача callback для обробки повідомлень
     socket.current = connectWebSocket('wss://focused-community-server.onrender.com', (data) => {
       console.log('Отримано повідомлення від сервера:', data); // Логуємо отримані дані
 
@@ -67,45 +67,62 @@ const Forum = () => {
   }, [messages]);
 
   return (
-    <div className="forum-wrapper">
-      <div className="forum-box">
-        <h1>🌱 Спільнота підтримки</h1>
-        <div className="forum-messages">
+    <div className="forum-wrapper" style={styles.wrapper}>
+      <div className="forum-box" style={styles.box}>
+        <h1 style={styles.header}>🌱 Спільнота підтримки</h1>
+        <div className="forum-messages" style={styles.messages}>
           {messages.map((msg) => (
-            <div key={msg.id} className="message-card">
-              <div className="message-header">
-                <span className="avatar">{msg.avatar}</span>
+            <div key={msg.id} className="message-card" style={styles.messageCard}>
+              <div className="message-header" style={styles.messageHeader}>
+                <span className="avatar" style={styles.avatar}>{msg.avatar}</span>
                 <strong>{msg.nickname}</strong>
               </div>
               <p>{msg.text}</p>
-              <div className="reactions">
+              <div className="reactions" style={styles.reactions}>
                 {['❤️', '👍', '⭐', '🤗'].map((r) => (
-                  <button key={r} onClick={() => addReaction(msg.id, r)}>
+                  <button key={r} onClick={() => addReaction(msg.id, r)} style={styles.reactionButton}>
                     {r}
                   </button>
                 ))}
-                {msg.reaction && <span className="selected-reaction">{msg.reaction}</span>}
+                {msg.reaction && <span style={styles.selectedReaction}>{msg.reaction}</span>}
               </div>
             </div>
           ))}
           <div ref={messageEndRef} />
         </div>
-        <div className="forum-inputs">
+        <div className="forum-inputs" style={styles.inputs}>
           <input
             placeholder="Твій нік"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
+            style={styles.input}
           />
           <textarea
             placeholder="Поділись своїми думками..."
             value={text}
             onChange={(e) => setText(e.target.value)}
+            style={styles.textarea}
           />
-          <button onClick={sendMessage}>💬 Надіслати</button>
+          <button onClick={sendMessage} style={styles.sendButton}>💬 Надіслати</button>
         </div>
       </div>
     </div>
   );
 };
 
-export default Forum;
+// Стилі для компонентів
+const styles = {
+  wrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
+    fontFamily: "'Comic Sans MS', 'Nunito', sans-serif',
+    padding: '1rem',
+    boxSizing: 'border-box',
+  },
+  box: {
+    width: '100%',
+    maxWidth: '600px',
+    padding: '
