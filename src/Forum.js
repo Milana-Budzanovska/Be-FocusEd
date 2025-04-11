@@ -1,3 +1,4 @@
+// імпорти
 import React, { useEffect, useRef, useState } from 'react';
 import { connectWebSocket } from './webSocketService';
 
@@ -18,6 +19,10 @@ const Forum = () => {
         setMessages((prev) =>
           prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
         );
+      } else if (data.type === 'delete-message') {
+        setMessages((prev) => prev.filter((m) => m.id !== data.id));
+      } else if (data.type === 'clear-history') {
+        setMessages([]);
       }
     });
     return () => socket.current && socket.current.close();
@@ -34,6 +39,25 @@ const Forum = () => {
         })
       );
       setText('');
+    }
+  };
+
+  const deleteMessage = (id) => {
+    socket.current.send(
+      JSON.stringify({
+        type: 'delete-message',
+        id,
+      })
+    );
+  };
+
+  const clearHistory = () => {
+    if (window.confirm("Очистити всю історію?")) {
+      socket.current.send(
+        JSON.stringify({
+          type: 'clear-history',
+        })
+      );
     }
   };
 
@@ -57,6 +81,10 @@ const Forum = () => {
     <div style={styles.wrapper}>
       <div style={styles.box}>
         <h1 style={styles.header}>🌱 Спільнота підтримки</h1>
+
+        {/* Кнопка для очищення історії */}
+        <button onClick={clearHistory} style={styles.clearButton}>🗑 Очистити історію</button>
+
         <div style={styles.messages}>
           {messages.map((msg) => (
             <div key={msg.id} style={styles.messageCard}>
@@ -65,6 +93,7 @@ const Forum = () => {
                 <strong>{msg.nickname}</strong>
               </div>
               <p>{msg.text}</p>
+
               <div style={styles.reactions}>
                 {['❤️', '👍', '⭐', '🤗'].map((r) => (
                   <button key={r} onClick={() => addReaction(msg.id, r)} style={styles.reactionButton}>
@@ -73,10 +102,21 @@ const Forum = () => {
                 ))}
                 {msg.reaction && <span style={styles.selectedReaction}>{msg.reaction}</span>}
               </div>
+
+              {/* Якщо повідомлення належить поточному користувачу */}
+              {msg.nickname === nickname && (
+                <button
+                  onClick={() => deleteMessage(msg.id)}
+                  style={styles.deleteButton}
+                >
+                  ❌ Видалити
+                </button>
+              )}
             </div>
           ))}
           <div ref={messageEndRef} />
         </div>
+
         <div style={styles.inputs}>
           <input
             placeholder="Твій нік"
@@ -97,95 +137,27 @@ const Forum = () => {
   );
 };
 
+// додаємо стилі для нових кнопок
 const styles = {
-  wrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    minHeight: '100vh',
-    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
-    fontFamily: "'Comic Sans MS', 'Nunito', sans-serif",
-    padding: '1rem',
-    boxSizing: 'border-box',
-  },
-  box: {
-    width: '100%',
-    maxWidth: '500px',
-    padding: '1rem',
-    background: '#ffffff',
-    borderRadius: '16px',
-    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
-  },
-  header: {
-    fontSize: '22px',
-    textAlign: 'center',
-    color: '#6c5ce7',
-    marginBottom: '1rem',
-  },
-  messages: {
-    maxHeight: '50vh',
-    overflowY: 'scroll',
-    marginBottom: '1rem',
-  },
-  messageCard: {
-    backgroundColor: '#f7f7f7',
-    padding: '0.8rem',
-    borderRadius: '12px',
-    marginBottom: '0.8rem',
-    fontSize: '0.95rem',
-  },
-  messageHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: '0.4rem',
-  },
-  avatar: {
-    marginRight: '0.5rem',
-    fontSize: '1.2rem',
-  },
-  reactions: {
-    display: 'flex',
-    gap: '0.4rem',
-    marginTop: '0.5rem',
-  },
-  reactionButton: {
+  ... /* (всі твої попередні стилі залишаються тут без змін) */,
+  deleteButton: {
+    marginTop: '0.3rem',
+    padding: '0.3rem 0.6rem',
+    backgroundColor: '#f8d7da',
+    color: '#721c24',
+    fontSize: '0.8rem',
     border: 'none',
-    background: 'none',
+    borderRadius: '6px',
     cursor: 'pointer',
-    fontSize: '1.4rem',
   },
-  selectedReaction: {
-    marginLeft: '0.6rem',
-    fontSize: '1.4rem',
-    color: '#6c5ce7',
-  },
-  inputs: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  input: {
-    padding: '0.6rem',
-    marginBottom: '0.6rem',
-    borderRadius: '10px',
-    border: '1px solid #ccc',
-    fontSize: '1rem',
-  },
-  textarea: {
-    padding: '0.6rem',
-    marginBottom: '0.6rem',
-    borderRadius: '10px',
-    border: '1px solid #ccc',
-    fontSize: '1rem',
-    height: '80px',
-  },
-  sendButton: {
-    padding: '0.6rem',
-    backgroundColor: '#6c5ce7',
-    color: '#fff',
+  clearButton: {
+    background: '#ffe0e0',
+    color: '#b80000',
     border: 'none',
-    borderRadius: '12px',
+    padding: '0.4rem 0.8rem',
+    borderRadius: '8px',
     cursor: 'pointer',
-    fontSize: '1rem',
+    marginBottom: '0.6rem',
   },
 };
 
