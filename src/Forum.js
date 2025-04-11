@@ -125,4 +125,82 @@ const styles = {
   box: {
     width: '100%',
     maxWidth: '600px',
-    padding: '
+    padding: '1.5rem',
+    background: '#ffffff',
+    borderRadius: '10px',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
+    overflow: 'hidden',
+  },
+  header: {
+    fontSize: '24px',
+    textAlign: 'center',
+    color: '#6c5ce7',
+  },
+  messages: {
+    maxHeight: '400px',
+    overflowY: 'scroll',
+    marginBottom: '1rem',
+  },
+  messageCard: {
+    backgroundColor: '#f7f7f7',
+    padding: '1rem',
+    borderRadius: '10px',
+    marginBottom: '1rem',
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
+  messageHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '0.5rem',
+  },
+  avatar: {
+    marginRight: '0.5rem',
+    fontSize: '1.5rem',
+  },
+  reactions: {
+    display: 'flex',
+    gap: '0.5rem',
+    marginTop: '0.5rem',
+  },
+  reactionButton: {
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer',
+    fontSize: '1.5rem',
+  },
+  selectedReaction: {
+    marginLeft: '1rem',
+    fontSize: '1.5rem',
+    color: '#6c5ce7',
+  },
+  inputs: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  input: {
+    padding: '0.8rem',
+    marginBottom: '1rem',
+    borderRadius: '10px',
+    border: '1px solid #ccc',
+    fontSize: '1rem',
+  },
+  textarea: {
+    padding: '0.8rem',
+    marginBottom: '1rem',
+    borderRadius: '10px',
+    border: '1px solid #ccc',
+    fontSize: '1rem',
+    height: '100px',
+  },
+  sendButton: {
+    padding: '0.8rem',
+    backgroundColor: '#6c5ce7',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+  },
+};
+
+export default Forum;
