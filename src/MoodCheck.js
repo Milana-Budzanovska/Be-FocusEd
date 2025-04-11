@@ -25,22 +25,23 @@ export default function MoodCheck() {
     alignItems: 'center',
     justifyContent: 'center',
     fontFamily: 'Nunito, sans-serif',
-    padding: '2rem',
+    padding: '1.5rem',
     boxSizing: 'border-box',
     margin: 0,
   };
 
   const headingStyle = {
-    fontSize: '3rem',
+    fontSize: '3rem', // використано великий шрифт для заголовка
     fontWeight: 'bold',
     color: '#6a0dad',
-    marginBottom: '2rem',
+    marginBottom: '1.5rem',
+    textAlign: 'center',
   };
 
   const buttonContainerStyle = {
     display: 'flex',
     flexDirection: 'column',
-    gap: '1.5rem',
+    gap: '1rem',
     alignItems: 'center',
     width: '100%',
     maxWidth: '400px',
@@ -57,11 +58,13 @@ export default function MoodCheck() {
     boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
     transition: 'background-color 0.3s ease-in-out',
     width: '100%',
+    maxWidth: '350px', // додаємо максимальну ширину для кнопок
+    textAlign: 'center', // вирівнюємо текст по центру
   });
 
   const buttonHoverStyle = {
     transform: 'scale(1.05)',
-    backgroundColor: '#a29bfe', // Hover effect for all buttons
+    backgroundColor: '#a29bfe', // Hover effect для всіх кнопок
   };
 
   return (
