@@ -7,11 +7,21 @@ import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
 import Forum from './Forum';
-import './App.css'; // обов’язкове підключення стилів
 
 function App() {
+  const appStyle = {
+    fontFamily: 'Nunito, sans-serif',
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
+    padding: '2rem',
+    boxSizing: 'border-box',
+    margin: 0,
+  };
+
   return (
-    <div className="App">
+    <div className="App" style={appStyle}>
       <Router>
         <Routes>
           <Route path="/" element={<MoodCheck />} />
