@@ -8,13 +8,14 @@ const Forum = () => {
   const messageEndRef = useRef(null);
   const socket = useRef(null); // зберігаємо посилання на WebSocket
 
+  // Використовуємо useEffect для підключення до WebSocket
   useEffect(() => {
     // Підключення до WebSocket і передача callback для обробки повідомлень
     socket.current = connectWebSocket('wss://focused-community-server.onrender.com', (data) => {
       if (data.type === 'history') {
-        setMessages(data.messages);
+        setMessages(data.messages); // Отримуємо історію повідомлень
       } else if (data.type === 'new-message') {
-        setMessages((prev) => [...prev, data.message]);
+        setMessages((prev) => [...prev, data.message]); // Додаємо нове повідомлення
       } else if (data.type === 'update-reaction') {
         setMessages((prev) =>
           prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
@@ -22,11 +23,15 @@ const Forum = () => {
       }
     });
 
+    // Закриваємо WebSocket при демонтажі компоненту
     return () => {
-      socket.current.close(); // Закриваємо з'єднання при демонтажі компонента
+      if (socket.current) {
+        socket.current.close();
+      }
     };
   }, []);
 
+  // Функція для надсилання повідомлення
   const sendMessage = () => {
     if (text.trim()) {
       socket.current.send(
@@ -41,6 +46,7 @@ const Forum = () => {
     }
   };
 
+  // Додаємо реакцію до повідомлення
   const addReaction = (id, reaction) => {
     socket.current.send(
       JSON.stringify({
@@ -51,6 +57,7 @@ const Forum = () => {
     );
   };
 
+  // Прокручуємо вниз при кожному оновленні списку повідомлень
   useEffect(() => {
     if (messageEndRef.current) {
       messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
