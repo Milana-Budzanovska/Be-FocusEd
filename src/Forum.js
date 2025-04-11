@@ -1,17 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { connectWebSocket } from './webSocketService'; // Імпортуємо сервіс
+import { connectWebSocket } from './webSocketService'; // Імпортуємо сервіс для WebSocket
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
   const messageEndRef = useRef(null);
-  const socket = useRef(null); // зберігаємо посилання на WebSocket
+  const socket = useRef(null); // Зберігаємо посилання на WebSocket
 
   // Використовуємо useEffect для підключення до WebSocket
   useEffect(() => {
     // Підключення до WebSocket і передача callback для обробки повідомлень
     socket.current = connectWebSocket('wss://focused-community-server.onrender.com', (data) => {
+      console.log('Отримано повідомлення від сервера:', data); // Логування отриманих даних
+
       if (data.type === 'history') {
         setMessages(data.messages); // Отримуємо історію повідомлень
       } else if (data.type === 'new-message') {
