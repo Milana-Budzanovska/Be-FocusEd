@@ -4,26 +4,28 @@ const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
-  const [lang, setLang] = useState('uk');
+  const [lang, setLang] = useState<'uk' | 'en'>('uk');
   const socket = useRef(null);
   const messageEndRef = useRef(null);
 
-  const translations = {
+  const t = {
     uk: {
-      title: "🌱 Спільнота підтримки",
-      nickname: "Твій нік",
-      placeholder: "Поділись своїми думками...",
-      send: "💬 Надіслати",
-      clear: "🧹 Очистити все",
-      confirm: "Очистити всю історію повідомлень?"
+      title: '🌱 Спільнота підтримки',
+      placeholderName: 'Твій нік',
+      placeholderText: 'Поділись своїми думками...',
+      send: '💬 Надіслати',
+      clear: '🧹 Очистити все',
+      confirmClear: 'Очистити всю історію повідомлень?',
+      langSwitch: 'EN'
     },
     en: {
-      title: "🌱 Support Community",
-      nickname: "Your nickname",
-      placeholder: "Share your thoughts...",
-      send: "💬 Send",
-      clear: "🧹 Clear All",
-      confirm: "Clear entire message history?"
+      title: '🌱 Support Community',
+      placeholderName: 'Your name',
+      placeholderText: 'Share your thoughts...',
+      send: '💬 Send',
+      clear: '🧹 Clear all',
+      confirmClear: 'Clear all message history?',
+      langSwitch: 'UA'
     }
   };
 
@@ -77,7 +79,7 @@ const Forum = () => {
   };
 
   const clearAll = () => {
-    if (window.confirm(translations[lang].confirm)) {
+    if (window.confirm(t[lang].confirmClear)) {
       socket.current.send(JSON.stringify({ type: 'clear-history' }));
     }
   };
@@ -88,15 +90,19 @@ const Forum = () => {
     }
   }, [messages]);
 
-  const t = translations[lang];
-
   return (
     <div style={styles.wrapper}>
       <div style={styles.box}>
-        <button onClick={() => setLang(lang === 'uk' ? 'en' : 'uk')} style={{ marginBottom: '1rem', alignSelf: 'flex-end' }}>
-          {lang === 'uk' ? 'EN' : 'УКР'}
-        </button>
-        <h1 style={styles.header}>{t.title}</h1>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
+          <button
+            style={{ ...styles.sendButton, backgroundColor: '#ccc', color: '#333' }}
+            onClick={() => setLang(lang === 'uk' ? 'en' : 'uk')}
+          >
+            {t[lang].langSwitch}
+          </button>
+        </div>
+
+        <h1 style={styles.header}>{t[lang].title}</h1>
         <div style={styles.messages}>
           {messages.map((msg) => (
             <div key={msg.id} style={styles.messageCard}>
@@ -123,20 +129,20 @@ const Forum = () => {
 
         <div style={styles.inputs}>
           <input
-            placeholder={t.nickname}
+            placeholder={t[lang].placeholderName}
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             style={styles.input}
           />
           <textarea
-            placeholder={t.placeholder}
+            placeholder={t[lang].placeholderText}
             value={text}
             onChange={(e) => setText(e.target.value)}
             style={styles.textarea}
           />
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button onClick={sendMessage} style={styles.sendButton}>{t.send}</button>
-            <button onClick={clearAll} style={styles.clearButton}>{t.clear}</button>
+            <button onClick={sendMessage} style={styles.sendButton}>{t[lang].send}</button>
+            <button onClick={clearAll} style={styles.clearButton}>{t[lang].clear}</button>
           </div>
         </div>
       </div>
