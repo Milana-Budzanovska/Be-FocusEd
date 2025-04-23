@@ -1,12 +1,31 @@
-// src/pages/Forum.js
 import React, { useEffect, useRef, useState } from 'react';
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
+  const [lang, setLang] = useState('uk');
   const socket = useRef(null);
   const messageEndRef = useRef(null);
+
+  const translations = {
+    uk: {
+      title: "🌱 Спільнота підтримки",
+      nickname: "Твій нік",
+      placeholder: "Поділись своїми думками...",
+      send: "💬 Надіслати",
+      clear: "🧹 Очистити все",
+      confirm: "Очистити всю історію повідомлень?"
+    },
+    en: {
+      title: "🌱 Support Community",
+      nickname: "Your nickname",
+      placeholder: "Share your thoughts...",
+      send: "💬 Send",
+      clear: "🧹 Clear All",
+      confirm: "Clear entire message history?"
+    }
+  };
 
   useEffect(() => {
     socket.current = new WebSocket('wss://focused-community-server.onrender.com');
@@ -58,7 +77,7 @@ const Forum = () => {
   };
 
   const clearAll = () => {
-    if (window.confirm('Очистити всю історію повідомлень?')) {
+    if (window.confirm(translations[lang].confirm)) {
       socket.current.send(JSON.stringify({ type: 'clear-history' }));
     }
   };
@@ -69,10 +88,15 @@ const Forum = () => {
     }
   }, [messages]);
 
+  const t = translations[lang];
+
   return (
     <div style={styles.wrapper}>
       <div style={styles.box}>
-        <h1 style={styles.header}>🌱 Спільнота підтримки</h1>
+        <button onClick={() => setLang(lang === 'uk' ? 'en' : 'uk')} style={{ marginBottom: '1rem', alignSelf: 'flex-end' }}>
+          {lang === 'uk' ? 'EN' : 'УКР'}
+        </button>
+        <h1 style={styles.header}>{t.title}</h1>
         <div style={styles.messages}>
           {messages.map((msg) => (
             <div key={msg.id} style={styles.messageCard}>
@@ -99,20 +123,20 @@ const Forum = () => {
 
         <div style={styles.inputs}>
           <input
-            placeholder="Твій нік"
+            placeholder={t.nickname}
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             style={styles.input}
           />
           <textarea
-            placeholder="Поділись своїми думками..."
+            placeholder={t.placeholder}
             value={text}
             onChange={(e) => setText(e.target.value)}
             style={styles.textarea}
           />
           <div style={{ display: 'flex', gap: '1rem' }}>
-            <button onClick={sendMessage} style={styles.sendButton}>💬 Надіслати</button>
-            <button onClick={clearAll} style={styles.clearButton}>🧹 Очистити все</button>
+            <button onClick={sendMessage} style={styles.sendButton}>{t.send}</button>
+            <button onClick={clearAll} style={styles.clearButton}>{t.clear}</button>
           </div>
         </div>
       </div>
