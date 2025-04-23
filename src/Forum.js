@@ -1,37 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { connectWebSocket } from './webSocketService';
 
 const Forum = () => {
   const [messages, setMessages] = useState([]);
   const [nickname, setNickname] = useState('Я');
   const [text, setText] = useState('');
-  const [language, setLanguage] = useState('uk');
-  const socket = useRef(null);
   const messageEndRef = useRef(null);
-
-  const t = {
-    uk: {
-      header: '🌱 Спільнота підтримки',
-      nickname: 'Твій нік',
-      placeholder: 'Поділись своїми думками...',
-      send: '💬 Надіслати',
-      clear: '🧹 Очистити все',
-      confirm: 'Очистити всю історію повідомлень?'
-    },
-    en: {
-      header: '🌱 Support Community',
-      nickname: 'Your nickname',
-      placeholder: 'Share your thoughts...',
-      send: '💬 Send',
-      clear: '🧹 Clear all',
-      confirm: 'Clear all message history?'
-    }
-  };
+  const socket = useRef(null);
 
   useEffect(() => {
-    socket.current = new WebSocket('wss://focused-community-server.onrender.com');
-
-    socket.current.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+    socket.current = connectWebSocket('wss://rhinestone-tin-ranunculus.glitch.me', (data) => {
       if (data.type === 'history') {
         setMessages(data.messages);
       } else if (data.type === 'new-message') {
@@ -40,13 +18,8 @@ const Forum = () => {
         setMessages((prev) =>
           prev.map((m) => (m.id === data.id ? { ...m, reaction: data.reaction } : m))
         );
-      } else if (data.type === 'delete-message') {
-        setMessages((prev) => prev.filter((m) => m.id !== data.id));
-      } else if (data.type === 'clear-history') {
-        setMessages([]);
       }
-    };
-
+    });
     return () => socket.current && socket.current.close();
   }, []);
 
@@ -57,7 +30,7 @@ const Forum = () => {
           type: 'new-message',
           text,
           nickname,
-          avatar: '🧠'
+          avatar: '🧠',
         })
       );
       setText('');
@@ -65,17 +38,13 @@ const Forum = () => {
   };
 
   const addReaction = (id, reaction) => {
-    socket.current.send(JSON.stringify({ type: 'reaction', id, reaction }));
-  };
-
-  const deleteMessage = (id) => {
-    socket.current.send(JSON.stringify({ type: 'delete-message', id }));
-  };
-
-  const clearAll = () => {
-    if (window.confirm(t[language].confirm)) {
-      socket.current.send(JSON.stringify({ type: 'clear-history' }));
-    }
+    socket.current.send(
+      JSON.stringify({
+        type: 'reaction',
+        id,
+        reaction,
+      })
+    );
   };
 
   useEffect(() => {
@@ -87,12 +56,7 @@ const Forum = () => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.box}>
-        <div style={{ textAlign: 'right', marginBottom: '10px' }}>
-          <button onClick={() => setLanguage(language === 'uk' ? 'en' : 'uk')} style={{ border: 'none', background: '#f3f3f3', padding: '6px 12px', borderRadius: '10px', cursor: 'pointer' }}>
-            {language === 'uk' ? 'ENG' : 'УКР'}
-          </button>
-        </div>
-        <h1 style={styles.header}>{t[language].header}</h1>
+        <h1 style={styles.header}>🌱 Спільнота підтримки</h1>
         <div style={styles.messages}>
           {messages.map((msg) => (
             <div key={msg.id} style={styles.messageCard}>
@@ -108,32 +72,25 @@ const Forum = () => {
                   </button>
                 ))}
                 {msg.reaction && <span style={styles.selectedReaction}>{msg.reaction}</span>}
-                {msg.nickname === nickname && (
-                  <button onClick={() => deleteMessage(msg.id)} style={styles.deleteButton}>🗑</button>
-                )}
               </div>
             </div>
           ))}
           <div ref={messageEndRef} />
         </div>
-
         <div style={styles.inputs}>
           <input
-            placeholder={t[language].nickname}
+            placeholder="Твій нік"
             value={nickname}
             onChange={(e) => setNickname(e.target.value)}
             style={styles.input}
           />
           <textarea
-            placeholder={t[language].placeholder}
+            placeholder="Поділись своїми думками..."
             value={text}
             onChange={(e) => setText(e.target.value)}
             style={styles.textarea}
           />
-          <div style={{ display: 'flex', gap: '1rem' }}>
-            <button onClick={sendMessage} style={styles.sendButton}>{t[language].send}</button>
-            <button onClick={clearAll} style={styles.clearButton}>{t[language].clear}</button>
-          </div>
+          <button onClick={sendMessage} style={styles.sendButton}>💬 Надіслати</button>
         </div>
       </div>
     </div>
@@ -142,43 +99,94 @@ const Forum = () => {
 
 const styles = {
   wrapper: {
-    display: 'flex', justifyContent: 'center', alignItems: 'center',
-    minHeight: '100vh', background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
-    fontFamily: 'Comic Sans MS, Nunito, sans-serif', padding: '1rem', boxSizing: 'border-box'
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: '100vh',
+    background: 'linear-gradient(to bottom right, #d8f3ff, #f3d8ff)',
+    fontFamily: "'Comic Sans MS', 'Nunito', sans-serif",
+    padding: '1rem',
+    boxSizing: 'border-box',
   },
   box: {
-    width: '100%', maxWidth: '600px', padding: '1.5rem', background: '#ffffff',
-    borderRadius: '10px', boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)', overflow: 'hidden'
+    width: '100%',
+    maxWidth: '500px',
+    padding: '1rem',
+    background: '#ffffff',
+    borderRadius: '16px',
+    boxShadow: '0 4px 10px rgba(0, 0, 0, 0.1)',
   },
-  header: { fontSize: '24px', textAlign: 'center', color: '#6c5ce7' },
-  messages: { maxHeight: '400px', overflowY: 'scroll', marginBottom: '1rem' },
+  header: {
+    fontSize: '22px',
+    textAlign: 'center',
+    color: '#6c5ce7',
+    marginBottom: '1rem',
+  },
+  messages: {
+    maxHeight: '50vh',
+    overflowY: 'scroll',
+    marginBottom: '1rem',
+  },
   messageCard: {
-    backgroundColor: '#f7f7f7', padding: '1rem', borderRadius: '10px',
-    marginBottom: '1rem', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+    backgroundColor: '#f7f7f7',
+    padding: '0.8rem',
+    borderRadius: '12px',
+    marginBottom: '0.8rem',
+    fontSize: '0.95rem',
   },
-  messageHeader: { display: 'flex', alignItems: 'center', marginBottom: '0.5rem' },
-  avatar: { marginRight: '0.5rem', fontSize: '1.5rem' },
-  reactions: { display: 'flex', gap: '0.5rem', marginTop: '0.5rem', alignItems: 'center' },
-  reactionButton: { border: 'none', background: 'none', cursor: 'pointer', fontSize: '1.5rem' },
-  selectedReaction: { marginLeft: '0.5rem', fontSize: '1.5rem', color: '#6c5ce7' },
-  deleteButton: { background: 'none', border: 'none', fontSize: '1.2rem', cursor: 'pointer', color: '#d63031' },
-  inputs: { display: 'flex', flexDirection: 'column' },
+  messageHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: '0.4rem',
+  },
+  avatar: {
+    marginRight: '0.5rem',
+    fontSize: '1.2rem',
+  },
+  reactions: {
+    display: 'flex',
+    gap: '0.4rem',
+    marginTop: '0.5rem',
+  },
+  reactionButton: {
+    border: 'none',
+    background: 'none',
+    cursor: 'pointer',
+    fontSize: '1.4rem',
+  },
+  selectedReaction: {
+    marginLeft: '0.6rem',
+    fontSize: '1.4rem',
+    color: '#6c5ce7',
+  },
+  inputs: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   input: {
-    padding: '0.8rem', marginBottom: '1rem', borderRadius: '10px',
-    border: '1px solid #ccc', fontSize: '1rem'
+    padding: '0.6rem',
+    marginBottom: '0.6rem',
+    borderRadius: '10px',
+    border: '1px solid #ccc',
+    fontSize: '1rem',
   },
   textarea: {
-    padding: '0.8rem', marginBottom: '1rem', borderRadius: '10px',
-    border: '1px solid #ccc', fontSize: '1rem', height: '100px'
+    padding: '0.6rem',
+    marginBottom: '0.6rem',
+    borderRadius: '10px',
+    border: '1px solid #ccc',
+    fontSize: '1rem',
+    height: '80px',
   },
   sendButton: {
-    padding: '0.8rem', backgroundColor: '#6c5ce7', color: '#fff',
-    border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '1rem'
+    padding: '0.6rem',
+    backgroundColor: '#6c5ce7',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '12px',
+    cursor: 'pointer',
+    fontSize: '1rem',
   },
-  clearButton: {
-    padding: '0.8rem', backgroundColor: '#fdcb6e', color: '#fff',
-    border: 'none', borderRadius: '12px', cursor: 'pointer', fontSize: '1rem'
-  }
 };
 
 export default Forum;
