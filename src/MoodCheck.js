@@ -1,16 +1,26 @@
-// src/pages/MoodCheck.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export default function MoodCheck() {
   const navigate = useNavigate();
-  const moods = [
-    { label: '😊 Щасливий', color: '#e0f7fa' }, // м'який блакитний
-    { label: '😐 Нейтральний', color: '#f0f4c3' }, // пастельний зелений
-    { label: '😢 Сумний', color: '#fce4ec' }, // м'який рожевий
-    { label: '😡 Злий', color: '#fff9c4' }, // світлий жовтий
-    { label: '😨 Стурбований', color: '#d1c4e9' } // пастельний фіолетовий
-  ];
+  const [language, setLanguage] = useState('uk');
+
+  const moods = {
+    uk: [
+      { label: '😊 Щасливий', color: '#e0f7fa' },
+      { label: '😐 Нейтральний', color: '#f0f4c3' },
+      { label: '😢 Сумний', color: '#fce4ec' },
+      { label: '😡 Злий', color: '#fff9c4' },
+      { label: '😨 Стурбований', color: '#d1c4e9' }
+    ],
+    en: [
+      { label: '😊 Happy', color: '#e0f7fa' },
+      { label: '😐 Neutral', color: '#f0f4c3' },
+      { label: '😢 Sad', color: '#fce4ec' },
+      { label: '😡 Angry', color: '#fff9c4' },
+      { label: '😨 Worried', color: '#d1c4e9' }
+    ]
+  };
 
   const handleMoodSelect = (mood) => {
     localStorage.setItem('mood', mood);
@@ -19,7 +29,7 @@ export default function MoodCheck() {
 
   const containerStyle = {
     minHeight: '100vh',
-    background: '#f5f5f5', // ніжний фон для кращого контрасту
+    background: '#f5f5f5',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -31,9 +41,9 @@ export default function MoodCheck() {
   };
 
   const headingStyle = {
-    fontSize: '2.5rem', // великий шрифт для заголовка
+    fontSize: '2.5rem',
     fontWeight: 'bold',
-    color: '#6a0dad', // м'який фіолетовий для заголовка
+    color: '#6a0dad',
     marginBottom: '1.5rem',
     textAlign: 'center',
   };
@@ -44,16 +54,16 @@ export default function MoodCheck() {
     gap: '1rem',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '350px', // щоб кнопки не були занадто широкими на екрані
+    maxWidth: '350px',
   };
 
   const buttonStyle = (color) => ({
     fontSize: '1.4rem',
     padding: '1rem 1.5rem',
-    borderRadius: '10px', // округлі краї
+    borderRadius: '10px',
     border: 'none',
     backgroundColor: color,
-    color: '#333', // темний текст для кращої читабельності
+    color: '#333',
     cursor: 'pointer',
     transition: 'background-color 0.3s ease-in-out',
     width: '100%',
@@ -63,9 +73,17 @@ export default function MoodCheck() {
 
   return (
     <div style={containerStyle}>
-      <h1 style={headingStyle}>Як ти себе сьогодні почуваєш?</h1>
+      <button
+        onClick={() => setLanguage(language === 'uk' ? 'en' : 'uk')}
+        style={{ marginBottom: '1.5rem', padding: '0.5rem 1rem', borderRadius: '10px', border: 'none', backgroundColor: '#ddd', cursor: 'pointer' }}
+      >
+        {language === 'uk' ? 'EN' : 'UA'}
+      </button>
+      <h1 style={headingStyle}>
+        {language === 'uk' ? 'Як ти себе сьогодні почуваєш?' : 'How do you feel today?'}
+      </h1>
       <div style={buttonContainerStyle}>
-        {moods.map((mood, index) => (
+        {moods[language].map((mood, index) => (
           <button
             key={index}
             onClick={() => handleMoodSelect(mood.label)}
