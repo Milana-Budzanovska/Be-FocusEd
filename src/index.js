@@ -1,33 +1,61 @@
-// src/index.js
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { WebSocketServer } from 'ws';
+import { v4 as uuidv4 } from 'uuid';
 
-import MoodCheck from './MoodCheck';
-import MainMenu from './MainMenu';
-import Learning from './Learning';
-import Breathing from './Breathing';
-import Progress from './Progress';
-import Settings from './Settings';
-import Forum from './Forum';
+const PORT = process.env.PORT || 10000;
+const wss = new WebSocketServer({ port: PORT });
 
-import './App.css'; // переконайся, що файл існує
+let messageHistory = [];
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+wss.on('connection', (ws) => {
+  ws.send(JSON.stringify({ type: 'history', messages: messageHistory }));
 
-root.render(
-  <React.StrictMode>
-    <Router>
-      <Routes>
-        <Route path="/" element={<MoodCheck />} />
-        <Route path="/menu" element={<MainMenu />} />
-        <Route path="/learning" element={<Learning />} />
-        <Route path="/breathing" element={<Breathing />} />
-        <Route path="/progress" element={<Progress />} />
-        <Route path="/settings" element={<Settings />} />
-        <Route path="/forum" element={<Forum />} />
-        <Route path="*" element={<MainMenu />} />
-      </Routes>
-    </Router>
-  </React.StrictMode>
-);
+  ws.on('message', (data) => {
+    try {
+      const message = JSON.parse(data);
+
+      switch (message.type) {
+        case 'new-message':
+          const newMsg = {
+            id: uuidv4(),
+            text: message.text,
+            nickname: message.nickname,
+            avatar: message.avatar || '🧠',
+            reaction: null,
+          };
+          messageHistory.push(newMsg);
+          broadcast({ type: 'new-message', message: newMsg });
+          break;
+
+        case 'reaction':
+          messageHistory = messageHistory.map(m =>
+            m.id === message.id ? { ...m, reaction: message.reaction } : m
+          );
+          broadcast({ type: 'update-reaction', id: message.id, reaction: message.reaction });
+          break;
+
+        case 'delete-message':
+          messageHistory = messageHistory.filter(m => m.id !== message.id);
+          broadcast({ type: 'delete-message', id: message.id });
+          break;
+
+        case 'clear-history':
+          messageHistory = [];
+          broadcast({ type: 'clear-history' });
+          break;
+      }
+    } catch (err) {
+      console.error('Invalid message:', err);
+    }
+  });
+});
+
+function broadcast(data) {
+  const payload = JSON.stringify(data);
+  wss.clients.forEach(client => {
+    if (client.readyState === 1) {
+      client.send(payload);
+    }
+  });
+}
+
+console.log(`✅ WebSocket server running on port ${PORT}`);
