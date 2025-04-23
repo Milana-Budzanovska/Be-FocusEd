@@ -9,10 +9,12 @@ import Learning from './Learning';
 import Breathing from './Breathing';
 import Progress from './Progress';
 import Settings from './Settings';
-import './App.css';
-import Forum from './Forum'; // імпортуємо сторінку форуму
+import Forum from './Forum';
+
+import './App.css'; // переконайся, що файл існує
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
     <Router>
@@ -23,7 +25,7 @@ root.render(
         <Route path="/breathing" element={<Breathing />} />
         <Route path="/progress" element={<Progress />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/forum" element={<Forum />} /> {/* ✅ Доданий маршрут */}
+        <Route path="/forum" element={<Forum />} />
         <Route path="*" element={<MainMenu />} />
       </Routes>
     </Router>
